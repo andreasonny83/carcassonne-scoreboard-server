@@ -20,7 +20,6 @@ var users = {
 var new_game = {
       name: 'New game',
       meeples: ['red', 'green', 'blue', 'yellow', 'black', 'gray'],
-      meeple_available: ['red', 'green', 'blue', 'yellow', 'black', 'gray'],
       max_players: 6
     };
 
@@ -85,16 +84,18 @@ function updateUsers() {
   console.log('\n');
 }
 
-app.use(express.static(__dirname + '/client'));
-
 // render the app
-app.get('/', function( req, res ) {
-  res.sendFile( __dirname + '/client/app.html');
+app.get('/status', function( req, res ) {
+  return res.status(200).json({
+    app: 'carcassonne-scoreborad-server',
+    status: 200,
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+  });
 });
 
 // redirect all others requests to the 404 page
 app.get('*', function( req, res ) {
-  res.sendFile( __dirname + '/client/404.html');
+  res.sendFile( __dirname + '/404.html');
 });
 
 // start listening for new users connected
@@ -195,10 +196,13 @@ io.on('connection', function(socket) {
         name: data.players[i].name || 'Player',
         color: data.players[i].color || 'Black',
         email: data.players[i].email || null,
-        gravatar: data.players[i].gravatar || 'https://secure.gravatar.com/avatar/857d4d7384156e928e743d53a8d37519?d=identicon&s=150',
+        gravatar: data.players[i].gravatar || 'https://secure.gravatar.com/avatar/',
         score: user_points
       });
     }
+
+    // gravatar: data.players[i].gravatar || 'https://secure.gravatar.com/avatar/857d4d7384156e928e743d53a8d37519?d=identicon&s=150',
+    // gravatar: "https://secure.gravatar.com/avatar/" + md5.createHash( "" + Math.random() ) + "?d=identicon&s=150",
 
     console.log(games[game_id]);
 
@@ -206,7 +210,6 @@ io.on('connection', function(socket) {
       games[game_id].players[0].selected = true;
     }
     games[game_id].name = data.name || new_game.name;
-    games[game_id].meeples = games[game_id].meeple_available = ['red', 'green', 'blue', 'yellow', 'black', 'gray'];
     games[game_id].max_players = new_game.max_players;
 
     // send back the updated information to the client
