@@ -155,26 +155,34 @@ io.on('connection', function(socket) {
     updateUsers();
   });
 
+
+  //=======================
+  //
+  //         Game
+  //
+  //=======================
+
   // create a new game or update an existing one
   // using the information fetched from the client
-  socket.on('game:ready', function (data) {
+  socket.on('game:start', function (data) {
     // if game_id is missing, create a new game
     var game_id = data.game_id || guid(),
         old_users, user_points, i;
 
-    if ( ! data.players || data.players.length <= 0 ) {
+    if ( ! data.game.players || data.game.players.length <= 0 ) {
       console.log('\n !Game updated with no users! Moving on!\n');
       socket.emit('game:ready', {error: true});
       return false;
     }
 
-    // create the game on the server database if doesn't exist
+    // create the game on server side if doesn't exist
     if ( ! games[game_id] ) {
       games[game_id] = {
         new_game: true,
         admin: uid,
         players: [],
-        logs: []
+        logs: [],
+        meeples: new_game.meeples
       };
     }
     else {
@@ -186,17 +194,20 @@ io.on('connection', function(socket) {
     // remove the previous user information and use the new ones
     games[game_id].players = [];
 
-    for ( i in data.players) {
+    for ( i in data.game.players) {
       // limit players to the new_game.max_players value
       if ( i >= new_game.max_players ) continue;
 
-      user_points = games[game_id].new_game ? 0 : old_users[i].score;
+      user_points = 0;
+      if ( ! games[game_id].new_game && old_users[i] && old_users[i].score ) {
+        user_points = old_users[i].score;
+      }
 
       games[game_id].players.push({
-        name: data.players[i].name || 'Player',
-        color: data.players[i].color || 'Black',
-        email: data.players[i].email || null,
-        gravatar: data.players[i].gravatar || 'https://secure.gravatar.com/avatar/',
+        name: data.game.players[i].name || 'Player',
+        color: data.game.players[i].color || 'Black',
+        email: data.game.players[i].email || null,
+        gravatar: data.game.players[i].gravatar || 'https://secure.gravatar.com/avatar/',
         score: user_points
       });
     }
@@ -209,8 +220,10 @@ io.on('connection', function(socket) {
     if ( games[game_id].new_game ) {
       games[game_id].players[0].selected = true;
     }
-    games[game_id].name = data.name || new_game.name;
+
+    games[game_id].name = data.game.name || new_game.name;
     games[game_id].max_players = new_game.max_players;
+    games[game_id].meeples = new_game.meeples;
 
     // send back the updated information to the client
     console.log('\n======================');
@@ -218,6 +231,8 @@ io.on('connection', function(socket) {
     console.log(games);
     console.log('======================\n');
     socket.emit('game:ready', {game_id: game_id, new_game: games[game_id].new_game});
+    // send new information to all the other users connected to the game
+    socket.broadcast.emit('game:update', {game_id: game_id, game: games[game_id]});
   });
 
   // a client requested a game_id information
@@ -236,32 +251,6 @@ io.on('connection', function(socket) {
     socket.emit('game:get', games[game_id]);
   });
 
-  // update score in a game
-  // TOBE CONTINUED
-  socket.on('game:score', function (data) {
-    var currentTime = new Date(),
-        hours = currentTime.getHours(),
-        minutes = currentTime.getMinutes(),
-        seconds = currentTime.getSeconds();
-
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-
-    var now = hours + ':' + minutes + ':' + seconds,
-        log = [now];
-
-    for (var i = 0; i < data.game.players.length; i++) {
-      if ( data.game.players[i].selected ) {
-        log.push( '+' + data.points );
-      }
-      else {
-        log.push( '-' );
-      }
-    }
-
-    data.game.logs.push( log );
-    socket.emit('game:score_updated', data.game.logs);
-  });
 });
 
 var serverPort = process.env.PORT || config.port;
