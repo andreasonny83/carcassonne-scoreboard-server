@@ -34,7 +34,7 @@ function guid() {
       .substring(1);
   }
 
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+  return s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
 
@@ -80,7 +80,7 @@ function updateUsers() {
   }
 
   // spread the updated online users to the conneted clients
-  io.sockets.emit('users:update', users.active.length);
+  io.sockets.emit('app:update', {users: users.active.length, games: Object.keys(games).length });
   console.log('\n');
 }
 
@@ -89,7 +89,8 @@ app.get('/status', function( req, res ) {
   return res.status(200).json({
     app: 'carcassonne-scoreborad-server',
     status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8),
+    // gitinfo:
   });
 });
 
@@ -104,7 +105,7 @@ io.on('connection', function(socket) {
       registered = false;
 
   // send the new user the number of online users so far
-  socket.emit('users:update', users.active.length);
+  socket.emit('app:update', {users: users.active.length, games: Object.keys(games).length });
 
   // welcome the new user
   socket.emit('init', true);
@@ -128,7 +129,7 @@ io.on('connection', function(socket) {
     }
 
     // spread the updated online users to the conneted clients
-    io.sockets.emit('users:update', users.active.length);
+    io.sockets.emit('app:update', {users: users.active.length, games: Object.keys(games).length });
   });
 
   /**
