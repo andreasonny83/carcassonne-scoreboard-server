@@ -218,10 +218,6 @@ io.on('connection', function(socket) {
 
     console.log(games[game_id]);
 
-    if ( games[game_id].new_game ) {
-      games[game_id].players[0].selected = true;
-    }
-
     games[game_id].name = data.game.name || new_game.name;
     games[game_id].max_players = new_game.max_players;
     games[game_id].meeples = new_game.meeples;
@@ -254,22 +250,28 @@ io.on('connection', function(socket) {
   });
 
   // update score in a game
-  // WorkInProgress...
   socket.on('game:score', function (data) {
     console.log(data);
     var currentTime = new Date(),
         hours = currentTime.getHours(),
         minutes = currentTime.getMinutes(),
-        seconds = currentTime.getSeconds();
+        seconds = currentTime.getSeconds(),
+        now, log;
+
+    if ( ! games[data.game_id] ) {
+      io.sockets.emit('game:update', {
+        game_id: data.game_id,
+        error: true
+      });
+    }
 
     minutes = minutes < 10 ? '0' + minutes : minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
-
-    var now = hours + ':' + minutes + ':' + seconds,
-        log = [now];
+    now     = hours + ':' + minutes + ':' + seconds;
+    log     = [now];
 
     for (var i = 0; i < data.game.players.length; i++) {
-      if ( data.game.players[i].selected ) {
+      if ( i === data.player_selected ) {
         log.push( '+' + data.points );
       }
       else {
@@ -277,15 +279,29 @@ io.on('connection', function(socket) {
       }
     }
 
-    console.log('-------LOG-------');
-    console.log(log);
-
     games[data.game_id].logs.push( log );
+
+    console.log('-------LOG-------');
+    console.log(games[data.game_id].logs);
+
     io.sockets.emit('game:update', {
       game_id: data.game_id,
       game: games[data.game_id]
     });
   });
+
+  socket.on('game:undo', function (data) {
+    console.log('Undo requested on game: ' + data.game_id);
+    if ( games[data.game_id] && games[data.game_id].logs.length > 0 ) {
+      games[data.game_id].logs.pop();
+
+      io.sockets.emit('game:update', {
+        game_id: data.game_id,
+        game: games[data.game_id]
+      });
+    }
+  });
+
 });
 
 var serverPort = process.env.PORT || config.port;
