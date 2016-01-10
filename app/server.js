@@ -3,7 +3,8 @@
 var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
-    io      = require('socket.io')(http);
+    io      = require('socket.io')(http),
+    guid    = require('./modules/guid');
 
 // configuration
 var config = require('../config/config.json');
@@ -22,21 +23,6 @@ var new_game = {
       meeples: ['red', 'green', 'blue', 'yellow', 'black', 'gray'],
       max_players: 6
     };
-
-/**
- * Generates a random unique id for the new games
- * @return [String] The unique id in string format
- */
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000 | 0)
-      .toString(16)
-      .substring(1);
-  }
-
-  return s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
-}
 
 /**
  * Make sure all the users are still online
