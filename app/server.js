@@ -162,7 +162,7 @@ io.on('connection', function(socket) {
       return false;
     }
 
-    // create the game on server side if doesn't exist
+    // create a new game on server side if doesn't exist
     if ( ! games[game_id] ) {
       games[game_id] = {
         new_game: true,
@@ -193,14 +193,9 @@ io.on('connection', function(socket) {
       games[game_id].players.push({
         name: data.game.players[i].name || 'Player',
         color: data.game.players[i].color || 'Black',
-        email: data.game.players[i].email || null,
-        gravatar: data.game.players[i].gravatar || 'https://secure.gravatar.com/avatar/',
         score: user_points
       });
     }
-
-    // gravatar: data.players[i].gravatar || 'https://secure.gravatar.com/avatar/857d4d7384156e928e743d53a8d37519?d=identicon&s=150',
-    // gravatar: "https://secure.gravatar.com/avatar/" + md5.createHash( "" + Math.random() ) + "?d=identicon&s=150",
 
     console.log(games[game_id]);
 
@@ -238,6 +233,7 @@ io.on('connection', function(socket) {
   // update score in a game
   socket.on('game:score', function (data) {
     console.log(data);
+
     var currentTime = new Date(),
         hours = currentTime.getHours(),
         minutes = currentTime.getMinutes(),
@@ -249,6 +245,17 @@ io.on('connection', function(socket) {
         game_id: data.game_id,
         error: true
       });
+
+      return;
+    }
+
+    if ( data.points <= 0 ) {
+      io.sockets.emit('game:update', {
+        game_id: data.game_id,
+        error: true
+      });
+
+      return;
     }
 
     minutes = minutes < 10 ? '0' + minutes : minutes;
