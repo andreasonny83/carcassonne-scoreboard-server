@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 0.2.0
+- Exported the `guid` module
+- Gravatar removed
+- Filter points to make sure user is within the accepted range before updating the game information<br>
+2016.01.10
+
 ### 0.1.1
 - Server Status
 - 404 page<br>
