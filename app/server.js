@@ -143,8 +143,7 @@ app.get('/status', function( req, res ) {
   return res.status(200).json({
     app: 'carcassonne-scoreborad-server',
     status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8),
-    games: games
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
   });
 });
 
