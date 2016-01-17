@@ -4,6 +4,11 @@
 
 ## Changelog
 
+### 1.0.0
+- Mongodb for storing the games on a database
+- Exported the `mongo` module<br>
+2016.01.17
+
 ### 0.2.0
 - Exported the `guid` module
 - Gravatar removed
