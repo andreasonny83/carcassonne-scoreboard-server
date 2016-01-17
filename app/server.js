@@ -9,6 +9,12 @@ var express = require('express'),
 // configuration
 var config = require('../config/config.json');
 
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+// Connection URL
+var url = 'mongodb://localhost:27017/carcassonne';
+
 // global variables
 var users = {
       active: [],
@@ -23,6 +29,68 @@ var new_game = {
       meeples: ['red', 'green', 'blue', 'yellow', 'black', 'gray'],
       max_players: 6
     };
+
+// Use connect method to connect to the Server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  // console.log('Database connection established.');
+
+  var collection = db.collection('games');
+
+  collection.find().each(function(err, doc) {
+    if (doc) {
+      games[doc._id] = doc;
+    }
+    else {
+      db.close();
+    }
+  });
+});
+
+function syncGame(game_id) {
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    // console.log('Database connection established.');
+
+    var collection = db.collection('games');
+    collection.update(
+      { _id: game_id },
+      { $set: {
+        name : games[game_id].name,
+        new_game : games[game_id].new_game,
+        admin : games[game_id].admin,
+        meeples : games[game_id].meeples,
+        max_players : games[game_id].max_players,
+        players : games[game_id].players,
+        logs : games[game_id].logs
+      }},
+      { upsert: true },
+      function() {
+        db.close();
+      }
+    );
+  });
+}
+
+function syncLog(game_id) {
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    console.log('Database connection established.');
+
+    var collection = db.collection('games');
+
+    collection.update(
+      { _id: game_id },
+      { $set: {
+        logs : games[game_id].logs
+      }},
+      { upsert: true },
+      function() {
+        db.close();
+      }
+    );
+  });
+}
 
 /**
  * Make sure all the users are still online
@@ -76,7 +144,19 @@ app.get('/status', function( req, res ) {
     app: 'carcassonne-scoreborad-server',
     status: 200,
     message: 'OK - ' + Math.random().toString(36).substr(3, 8),
-    // gitinfo:
+    games: games
+  });
+});
+
+// render the games in the database
+app.get('/gamesinfo', function( req, res ) {
+  console.log('page: ' + req.query.page);
+  var page = req.query.page ? req.query.page : 0,
+      output = {},
+      items_per_page = 20;
+
+  return res.status(200).json({
+    games
   });
 });
 
@@ -195,6 +275,8 @@ io.on('connection', function(socket) {
         color: data.game.players[i].color || 'Black',
         score: user_points
       });
+
+      syncGame(game_id);
     }
 
     console.log(games[game_id]);
@@ -240,16 +322,7 @@ io.on('connection', function(socket) {
         seconds = currentTime.getSeconds(),
         now, log;
 
-    if ( ! games[data.game_id] ) {
-      io.sockets.emit('game:update', {
-        game_id: data.game_id,
-        error: true
-      });
-
-      return;
-    }
-
-    if ( data.points <= 0 ) {
+    if ( ! games[data.game_id] || data.points <= 0 ) {
       io.sockets.emit('game:update', {
         game_id: data.game_id,
         error: true
@@ -273,6 +346,7 @@ io.on('connection', function(socket) {
     }
 
     games[data.game_id].logs.push( log );
+    syncLog(data.game_id);
 
     console.log('-------LOG-------');
     console.log(games[data.game_id].logs);
@@ -287,6 +361,7 @@ io.on('connection', function(socket) {
     console.log('Undo requested on game: ' + data.game_id);
     if ( games[data.game_id] && games[data.game_id].logs.length > 0 ) {
       games[data.game_id].logs.pop();
+      syncLog(data.game_id);
 
       io.sockets.emit('game:update', {
         game_id: data.game_id,
