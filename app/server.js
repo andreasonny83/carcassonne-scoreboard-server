@@ -4,6 +4,7 @@ var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
     io      = require('socket.io')(http);
+var pkginfo = require('pkginfo')(module);
 // configuration
 var config = require('../config/config.json');
 // Modules
@@ -57,7 +58,8 @@ function updateUsers() {
 // render the app
 app.get('/status', function( req, res ) {
   return res.status(200).json({
-    app: 'carcassonne-scoreborad-server',
+    app: module.exports.name,
+    version: module.exports.version,
     status: 200,
     message: 'OK - ' + Math.random().toString(36).substr(3, 8)
   });

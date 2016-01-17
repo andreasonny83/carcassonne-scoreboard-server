@@ -4,6 +4,10 @@
 
 ## Changelog
 
+### 1.0.1
+- pkginfo to render package info into /status API endpoint<br>
+2016.01.17
+
 ### 1.0.0
 - Mongodb for storing the games on a database
 - Exported the `mongo` module<br>
