@@ -373,6 +373,9 @@ io.on('connection', function(socket) {
 
 var serverPort = process.env.PORT || config.port;
 
+console.log('Printing out Environment Variables:');
+console.log(process.env);
+
 http.listen(serverPort, function() {
   console.log("Server correctly started.");
   console.log("Server is listening on port " + serverPort);
