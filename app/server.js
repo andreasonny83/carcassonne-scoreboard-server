@@ -13,7 +13,7 @@ var config = require('../config/config.json');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 // Connection URL
-var url = 'mongodb://localhost:27017/carcassonne';
+var url = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/carcassonne';
 
 // global variables
 var users = {
@@ -372,9 +372,6 @@ io.on('connection', function(socket) {
 });
 
 var serverPort = process.env.PORT || config.port;
-
-console.log('Printing out Environment Variables:');
-console.log(process.env);
 
 http.listen(serverPort, function() {
   console.log("Server correctly started.");
