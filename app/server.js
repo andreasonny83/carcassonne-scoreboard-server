@@ -19,12 +19,11 @@ var users = {
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-  res.header('Access-Control-Max-Age', '86400'); // 24 hours
-  res.header('Access-Control-Allow-Headers', 'X-Auth-Key');
 
   var token = req.query && req.query.api_key;
+  console.log('token: ' + token);
 
   if ( token === config.API_KEY ) {
     next();
