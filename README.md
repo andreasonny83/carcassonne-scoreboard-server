@@ -7,7 +7,7 @@ The API endpoint documentation is available at: [github.com/andreasonny83/carcas
 ## Changelog
 
 ### 1.0.2
-- API Key required with CORS support
+- CORS support
 - Documentation for the API endpoints<br>
 2016.01.23
 ### 1.0.1
