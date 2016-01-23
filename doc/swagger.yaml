@@ -1,0 +1,137 @@
+swagger: '2.0'
+info:
+  title: Carcassonne Scoreboard API
+  description: |
+    **This example has a working backend hosted in Heroku**
+
+    Store all the games created using the Carcassonne Scoreboard front-end applications
+    Find source code of this API [here](https://github.com/andreasonny83/carcassonne-scoreboard-server)
+  version: 1.0.1
+host: carcassonne-scoreboard.herokuapp.com
+schemes:
+  - http
+  - https
+basePath: /
+produces:
+  - application/json
+paths:
+  /status:
+    get:
+      summary: Server status
+      description: |
+        The Status endpoint returns information about the server
+      tags:
+        - Status
+      responses:
+        '200':
+          description: The server status and version number
+          schema:
+            type: object
+            properties:
+              app:
+                type: string
+                description: carcassonne-scoreboard-server
+              version:
+                type: number
+                description: The app version number
+              status:
+                type: number
+                description: The app version number
+              message:
+                type: string
+                description: Return OK and a random generated number that can be used to verify the server integrity
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /gamesinfo:
+    get:
+      summary: List of games
+      description: Return a list of the games present in the database displayed 5 per page.
+      parameters:
+        - name: page
+          in: query
+          description: The page result to be returned.
+          type: number
+      tags:
+        - Games
+      responses:
+        200:
+          description: The games objects
+          schema:
+            $ref: '#/definitions/Game'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /gamesinfo/{gameUid}:
+    get:
+      summary: Display game details
+      description: Display all the information related to a specific game
+      parameters:
+        - name: gameUid
+          in: path
+          type: string
+          description: UID of the game
+          required: true
+      tags:
+        - Game details
+      responses:
+        200:
+          description: The games objects
+          schema:
+            $ref: '#/definitions/Game'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+  Game:
+    type: object
+    properties:
+      _id:
+        type: string
+        description: The game unique id
+      name:
+        type: string
+        description: The game name
+      new_game:
+        type: boolean
+        description: Set to true only when the game has been generated for the fisrt time
+      admin:
+        type: string
+        description: The creator unique user id of the game
+      meeples:
+        type: array
+        description: The meeples available in the selected game
+        items:
+          type: string
+      max_players:
+        type: integer
+        description: The maximum players for the selected game
+      players:
+        type: array
+        description: The game's player
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            color:
+              type: string
+            score:
+              type: integer
+      logs:
+        type: array
+        description: The game's log
+        items:
+          type: array
+          items:
+            type: number
+            
