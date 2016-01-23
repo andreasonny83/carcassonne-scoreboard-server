@@ -2,7 +2,7 @@
 
 ###### Client version available at: [github.com/andreasonny83/carcassonne-scoreboard-client](https://github.com/andreasonny83/carcassonne-scoreboard-client)
 
-The API endpoint documentation is available at: [github.com/andreasonny83/carcassonne-scoreboard-client/doc](https://github.com/andreasonny83/carcassonne-scoreboard-client/doc/)
+The API endpoint documentation is available at: [andreasonny83.github.io/carcassonne-scoreboard-server](http://andreasonny83.github.io/carcassonne-scoreboard-server/)
 
 ## Changelog
 
