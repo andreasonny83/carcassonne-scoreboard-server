@@ -1,5 +1,6 @@
 {
   "port": 5000,
+  "API_KEY": "A9MKS4Ub5m91Gr0176g87kKM66WWyV59",
   "mongodb": "mongodb://localhost:27017/carcassonne",
   "games": {},
   "game": {

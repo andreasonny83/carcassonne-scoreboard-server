@@ -1,9 +1,15 @@
 # Carcassonne Scoreboard (server)
 
-###### Client version available at: [github.com/andreasonny83/carcassonne-scoreborad-client](https://github.com/andreasonny83/carcassonne-scoreborad-client)
+###### Client version available at: [github.com/andreasonny83/carcassonne-scoreboard-client](https://github.com/andreasonny83/carcassonne-scoreboard-client)
+
+The API endpoint documentation is available at: [github.com/andreasonny83/carcassonne-scoreboard-client/doc](https://github.com/andreasonny83/carcassonne-scoreboard-client/doc/)
 
 ## Changelog
 
+### 1.0.2
+- API Key required with CORS support
+- Documentation for the API endpoints<br>
+2016.01.23
 ### 1.0.1
 - pkginfo to render package info into /status API endpoint<br>
 2016.01.17

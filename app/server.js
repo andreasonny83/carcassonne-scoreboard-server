@@ -3,8 +3,8 @@
 var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
-    io      = require('socket.io')(http);
-var pkginfo = require('pkginfo')(module);
+    io      = require('socket.io')(http),
+    pkginfo = require('pkginfo')(module);
 // configuration
 var config = require('../config/config.json');
 // Modules
@@ -16,6 +16,28 @@ var users = {
       connected: [],
       disconnected: []
     };
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  res.header('Access-Control-Max-Age', '86400'); // 24 hours
+  res.header('Access-Control-Allow-Headers', 'X-Auth-Key');
+
+  var token = req.query && req.query.api_key;
+
+  if ( token === config.API_KEY ) {
+    next();
+  }
+  else {
+    // if there is no API_KEY
+    // return an error
+    return res.status(403).send({
+        success: false,
+        message: 'Wrong API key.'
+    });
+  }
+});
 
 mongo.init();
 
@@ -65,14 +87,24 @@ app.get('/status', function( req, res ) {
   });
 });
 
-// render the games in the database
+// render the games in the database sorted by pages
 app.get('/gamesinfo', function( req, res ) {
   var page = req.query.page ? req.query.page : 0,
-      output = {},
-      items_per_page = 20;
+      items_per_page = 5;
 
-  return res.status(200).json({
-    games: config.games
+  mongo.getGames(page, items_per_page, function(data) {
+    return res.status(200).json({
+      games: data
+    });
+  });
+});
+
+// return the selected game, if present in the database
+app.get('/gamesinfo/:game_id', function( req, res ) {
+  mongo.getGame(req.params.game_id, function(data) {
+    return res.status(200).json({
+      games: data
+    });
   });
 });
 
