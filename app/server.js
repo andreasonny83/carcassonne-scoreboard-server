@@ -3,7 +3,6 @@
 var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
-    cors    = require('cors'),
     io      = require('socket.io')(http),
     pkginfo = require('pkginfo')(module);
 // configuration
@@ -18,9 +17,27 @@ var users = {
       disconnected: []
     };
 
-var corsOptions = {
-  origin: 'http://www.sonnywebdesign.com'
-};
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  res.header('Access-Control-Max-Age', '86400'); // 24 hours
+  res.header('Access-Control-Allow-Headers', 'X-Auth-Key');
+
+  var token = req.query && req.query.api_key;
+
+  if ( token === config.API_KEY ) {
+    next();
+  }
+  else {
+    // if there is no API_KEY
+    // return an error
+    return res.status(403).send({
+        success: false,
+        message: 'Wrong API key.'
+    });
+  }
+});
 
 mongo.init();
 
@@ -61,24 +78,19 @@ function updateUsers() {
 }
 
 // render the app
-app.get('/status', cors(corsOptions), function( req, res, next ) {
-  // return res.status(200).json({
-  //   app: module.exports.name,
-  //   version: module.exports.version,
-  //   status: 200,
-  //   message: 'OK - ' + Math.random().toString(36).substr(3, 8)
-  // });
-  res.json({msg: 'This is CORS-enabled for only example.com.'});
+app.get('/status', function( req, res ) {
+  return res.status(200).json({
+    app: module.exports.name,
+    version: module.exports.version,
+    status: 200,
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+  });
 });
 
 // render the games in the database sorted by pages
 app.get('/gamesinfo', function( req, res ) {
-  res.header('Access-Control-Allow-Origin', "*");
-  res.header("Access-Control-Allow-Headers", "Content-Type, X-API-KEY");
-  res.header("Content-Type", "application/json; charset=utf-8");
-
   var page = req.query.page ? req.query.page : 0,
-      items_per_page = 10;
+      items_per_page = 5;
 
   mongo.getGames(page, items_per_page, function(data) {
     return res.status(200).json({
