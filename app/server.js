@@ -19,24 +19,46 @@ var users = {
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-  res.header('Access-Control-Max-Age', '86400'); // 24 hours
-  res.header('Access-Control-Allow-Headers', 'X-Auth-Key');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept');
 
-  var token = req.query && req.query.api_key;
+  next();
+});
 
-  if ( token === config.API_KEY ) {
-    next();
-  }
-  else {
-    // if there is no API_KEY
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'Wrong API key.'
+// render the app
+app.get('/status', function( req, res ) {
+  return res.status(200).json({
+    app: module.exports.name,
+    version: module.exports.version,
+    status: 200,
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+  });
+});
+
+// render the games in the database sorted by pages
+app.get('/gamesinfo', function( req, res ) {
+  var page = req.query.page ? req.query.page : 0,
+      items_per_page = 5;
+
+  mongo.getGames(page, items_per_page, function(data) {
+    return res.status(200).json({
+      games: data
     });
-  }
+  });
+});
+
+// return the selected game, if present in the database
+app.get('/gamesinfo/:game_id', function( req, res ) {
+  mongo.getGame(req.params.game_id, function(data) {
+    return res.status(200).json({
+      games: data
+    });
+  });
+});
+
+// redirect all others requests to the 404 page
+app.get('*', function( req, res ) {
+  res.sendFile( __dirname + '/404.html');
 });
 
 mongo.init();
@@ -76,42 +98,6 @@ function updateUsers() {
   // spread the updated online users to the conneted clients
   io.sockets.emit('app:update', {users: users.active.length, games: Object.keys(config.games).length });
 }
-
-// render the app
-app.get('/status', function( req, res ) {
-  return res.status(200).json({
-    app: module.exports.name,
-    version: module.exports.version,
-    status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
-  });
-});
-
-// render the games in the database sorted by pages
-app.get('/gamesinfo', function( req, res ) {
-  var page = req.query.page ? req.query.page : 0,
-      items_per_page = 5;
-
-  mongo.getGames(page, items_per_page, function(data) {
-    return res.status(200).json({
-      games: data
-    });
-  });
-});
-
-// return the selected game, if present in the database
-app.get('/gamesinfo/:game_id', function( req, res ) {
-  mongo.getGame(req.params.game_id, function(data) {
-    return res.status(200).json({
-      games: data
-    });
-  });
-});
-
-// redirect all others requests to the 404 page
-app.get('*', function( req, res ) {
-  res.sendFile( __dirname + '/404.html');
-});
 
 // start listening for new users connected
 io.on('connection', function(socket) {
