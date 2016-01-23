@@ -1,6 +1,6 @@
 # Carcassonne Scoreboard (server)
 
-###### Client version available at: [github.com/andreasonny83/carcassonne-scoreborad-client](https://github.com/andreasonny83/carcassonne-scoreborad-client)
+###### Client version available at: [github.com/andreasonny83/carcassonne-scoreboard-client](https://github.com/andreasonny83/carcassonne-scoreboard-client)
 
 ## Changelog
 

@@ -13,7 +13,9 @@ var url = process.env.MONGOLAB_URI || config.mongodb;
 module.exports = {
   init: init,
   syncGame: syncGame,
-  syncLog: syncLog
+  syncLog: syncLog,
+  getGames: getGames,
+  getGame: getGame
 }
 
 // Use connect method to connect to the Server
@@ -77,5 +79,45 @@ function syncLog(game_id) {
         db.close();
       }
     );
+  });
+}
+
+function getItems(db, page, items_per_page, callback) {
+  var output = {};
+
+  db.collection('games').find().skip(items_per_page * page).limit(items_per_page)
+    .each(function(err, doc) {
+      if (doc) {
+        output[doc._id] = doc;
+      }
+      else {
+        callback(output);
+      }
+    });
+}
+
+function getGames(page, items_per_page, callback) {
+  page = page || 0;
+  items_per_page = items_per_page || 10;
+
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+
+    getItems(db, page, items_per_page, function(res) {
+      db.close();
+      callback(res);
+    });
+  });
+}
+
+function getGame(game_id, callback) {
+  if ( ! game_id ) return 0;
+
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+
+    db.collection('games').findOne({_id:game_id}, function(err, item) {
+      callback(item);
+    });
   });
 }

@@ -3,8 +3,9 @@
 var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
-    io      = require('socket.io')(http);
-var pkginfo = require('pkginfo')(module);
+    cors    = require('cors'),
+    io      = require('socket.io')(http),
+    pkginfo = require('pkginfo')(module);
 // configuration
 var config = require('../config/config.json');
 // Modules
@@ -16,6 +17,10 @@ var users = {
       connected: [],
       disconnected: []
     };
+
+var corsOptions = {
+  origin: 'http://www.sonnywebdesign.com'
+};
 
 mongo.init();
 
@@ -56,23 +61,38 @@ function updateUsers() {
 }
 
 // render the app
-app.get('/status', function( req, res ) {
-  return res.status(200).json({
-    app: module.exports.name,
-    version: module.exports.version,
-    status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+app.get('/status', cors(corsOptions), function( req, res, next ) {
+  // return res.status(200).json({
+  //   app: module.exports.name,
+  //   version: module.exports.version,
+  //   status: 200,
+  //   message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+  // });
+  res.json({msg: 'This is CORS-enabled for only example.com.'});
+});
+
+// render the games in the database sorted by pages
+app.get('/gamesinfo', function( req, res ) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type, X-API-KEY");
+  res.header("Content-Type", "application/json; charset=utf-8");
+
+  var page = req.query.page ? req.query.page : 0,
+      items_per_page = 10;
+
+  mongo.getGames(page, items_per_page, function(data) {
+    return res.status(200).json({
+      games: data
+    });
   });
 });
 
-// render the games in the database
-app.get('/gamesinfo', function( req, res ) {
-  var page = req.query.page ? req.query.page : 0,
-      output = {},
-      items_per_page = 20;
-
-  return res.status(200).json({
-    games: config.games
+// return the selected game, if present in the database
+app.get('/gamesinfo/:game_id', function( req, res ) {
+  mongo.getGame(req.params.game_id, function(data) {
+    return res.status(200).json({
+      games: data
+    });
   });
 });
 
