@@ -1,5 +1,5 @@
 {
-  "port": 5000,
+  "port": 5005,
   "mongodb": "mongodb://localhost:27017/carcassonne",
   "games": {},
   "game": {

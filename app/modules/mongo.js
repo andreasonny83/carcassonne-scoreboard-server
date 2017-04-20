@@ -3,12 +3,14 @@
  *
  * Perform MongoDB connection and sync the games collection
  */
-var MongoClient = require('mongodb').MongoClient,
-    assert = require('assert');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
 // configuration
-var config = require('../../config/config.json');
+const config = require('../../config/config.json');
+
 // MongoDB connection URL
-var url = process.env.MONGOLAB_URI || config.mongodb;
+const url = process.env.MONGOLAB_URI || config.mongodb;
 
 module.exports = {
   init: init,
@@ -22,7 +24,7 @@ module.exports = {
 function init() {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
-    // console.log('Database connection established.');
+    console.log('Database connection established.');
 
     var collection = db.collection('games');
 
@@ -40,7 +42,6 @@ function init() {
 function syncGame(game_id) {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
-    // console.log('Database connection established.');
 
     var collection = db.collection('games');
     collection.update(
@@ -65,7 +66,6 @@ function syncGame(game_id) {
 function syncLog(game_id) {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
-    // console.log('Database connection established.');
 
     var collection = db.collection('games');
 
@@ -85,7 +85,10 @@ function syncLog(game_id) {
 function getItems(db, page, items_per_page, callback) {
   var output = {};
 
-  db.collection('games').find().skip(items_per_page * page).limit(items_per_page)
+  db.collection('games')
+    .find()
+    .skip(items_per_page * page)
+    .limit(items_per_page)
     .each(function(err, doc) {
       if (doc) {
         output[doc._id] = doc;
@@ -116,8 +119,9 @@ function getGame(game_id, callback) {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
 
-    db.collection('games').findOne({_id:game_id}, function(err, item) {
-      callback(item);
-    });
+    db.collection('games')
+      .findOne({_id:game_id}, function(err, item) {
+        callback(item);
+      });
   });
 }
