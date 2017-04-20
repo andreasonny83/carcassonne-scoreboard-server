@@ -18,7 +18,8 @@
   },
   "scripts": {
     "start": "concurrently \"mongod\" \"nodemon app/server.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commit": "git-cz"
   },
   "dependencies": {
     "express": "4.13.3",
@@ -27,10 +28,17 @@
     "pkginfo": "0.3.1",
     "socket.io": "1.3.7"
   },
+  "devDependencies": {
+    "commitizen": "2.9.6",
+    "concurrently": "3.4.0",
+    "cz-conventional-changelog": "2.0.0",
+    "nodemon": "1.11.0"
+  },
   "private": true,
   "license": "MIT",
-  "devDependencies": {
-    "concurrently": "3.4.0",
-    "nodemon": "1.11.0"
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

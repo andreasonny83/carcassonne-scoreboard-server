@@ -215,9 +215,10 @@ function handler(socket) {
   // update score in a game
   socket.on('game:score', function (data) {
     const currentTime = new Date();
-    const hours = currentTime.getHours();
-    const minutes = currentTime.getMinutes();
-    const seconds = currentTime.getSeconds();
+
+    let hours = currentTime.getHours();
+    let minutes = currentTime.getMinutes();
+    let seconds = currentTime.getSeconds();
 
     let now;
     let log;
