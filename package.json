@@ -19,7 +19,9 @@
   "scripts": {
     "start": "concurrently \"mongod\" \"nodemon app/server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "version": "",
+    "postversion": "git-cz git push && git push --tags"
   },
   "dependencies": {
     "express": "4.13.3",

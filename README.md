@@ -47,33 +47,22 @@ you will now be able to run your local project simply with:
 npm start
 ```
 
+## Contributing
+
+This package is using the AngularJS commit messages as default way to contribute
+with commitizen node package integrated in this repository.
+
+1.  Fork it!
+1.  Create your feature branch: `git checkout -b my-new-feature`
+1.  Add your changes: `git add .`
+1.  Commit your changes: `npm run commit`
+1.  Push to the branch using npm version: `npm version minor -m "Some message to commit"`
+1.  Submit a pull request :sunglasses:
+
 ## Changelog
 
-### 1.0.2
-*   CORS support
-*   Documentation for the API endpoints<br>
-2016.01.23
+Changelog available [here](http://andreasonny83.github.io/carcassonne-scoreboard-server/releases)
 
-### 1.0.1
-*   pkginfo to render package info into /status API endpoint<br>
-2016.01.17
+## License
 
-### 1.0.0
-*   Mongodb for storing the games on a database
-*   Exported the `mongo` module<br>
-2016.01.17
-
-### 0.2.0
-*   Exported the `guid` module
-*   Gravatar removed
-*   Filter points to make sure user is within the accepted range before updating the game information<br>
-2016.01.10
-
-### 0.1.1
-*   Server Status
-*   404 page<br>
-2016.01.06
-
-### 0.1.0
-*   initial release<br>
-2016.01.06
+[MIT License](http://andreasonny83.github.io/carcassonne-scoreboard-server/blob/master/LICENSE) © Andrea SonnY
