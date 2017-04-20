@@ -56,7 +56,7 @@ with commitizen node package integrated in this repository.
 1.  Create your feature branch: `git checkout -b my-new-feature`
 1.  Add your changes: `git add .`
 1.  Commit your changes: `npm run commit`
-1.  Push to the branch using npm version: `npm version minor`
+1.  Push and tag using npm version: `npm version minor`
 1.  Submit a pull request :sunglasses:
 
 ## Changelog
