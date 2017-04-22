@@ -9,13 +9,18 @@ const assert = require('assert');
 // configuration
 const config = require('../config/config.json');
 
+const debug = process.env.DEBUG;
+
 // MongoDB connection URL
 const url = process.env.MONGOLAB_URI ||
             process.env.NODE_ENV === 'test' ?
               config.db.testdb :
               config.db.mongodb;
 
-console.log(url);
+if (debug === 'true') {
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('mongodb url:', url);
+}
 
 module.exports = {
   init: init,
