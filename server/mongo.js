@@ -7,10 +7,15 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 // configuration
-const config = require('../../config/config.json');
+const config = require('../config/config.json');
 
 // MongoDB connection URL
-const url = process.env.MONGOLAB_URI || config.mongodb;
+const url = process.env.MONGOLAB_URI ||
+            process.env.NODE_ENV === 'test' ?
+              config.db.testdb :
+              config.db.mongodb;
+
+console.log(url);
 
 module.exports = {
   init: init,

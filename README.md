@@ -24,8 +24,19 @@ cd carcassonne-scoreboard-server
 
 ### Install the dependencies
 
-This project uses NodeJS and npm.
+This project uses NodeJS and npm and MongoDB.
 Make sure you have them installed on your machine before proceeding.
+
+Then, install MongoDB on your machine
+
+```sh
+# On OSX
+$ brew update
+$ brew install mongodb
+```
+
+If you are on Windows or Linux, check out the [official MongoDB installation
+page](https://docs.mongodb.com/manual/installation/#mongodb-community-edition)
 
 Then, install all the project's dependencies
 
@@ -38,7 +49,7 @@ $ yarn install
 This will install all the local dependencies the application
 needs to run in development mode.
 
-### Run your local project
+## Run your local project
 
 If you have correctly installed all the dependencies,
 you will now be able to run your local project simply with:
@@ -46,6 +57,14 @@ you will now be able to run your local project simply with:
 ```sh
 npm start
 ```
+
+## MongoDB
+
+Mongo starts and stop automatically while running `npm start`
+To manually stop the mongodb process, use the `npm stop` command.
+
+If you kill the `npm start` process before it runs the node server application,
+you will need to manually kill the mongod process with `npm stop`.
 
 ## Contributing
 

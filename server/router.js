@@ -1,5 +1,5 @@
 const express = require('express');
-const mongo = require('./modules/mongo');
+const mongo = require('./mongo');
 
 const router = express.Router();
 
@@ -44,5 +44,5 @@ router.get('/gamesinfo/:game_id', function(req, res) {
 
 // redirect all others requests to the 404 page
 router.get('*', function(req, res) {
-  res.sendFile( __dirname + '/404.html');
+  res.status(404).sendFile( __dirname + '/404.html');
 });

@@ -1,6 +1,9 @@
 {
   "port": 5005,
-  "mongodb": "mongodb://localhost:27017/carcassonne",
+  "db": {
+    "mongodb": "mongodb://localhost/carcassonne",
+    "testdb": "mongodb://localhost/carcassonne_test"
+  },
   "games": {},
   "game": {
     "name": "New game",

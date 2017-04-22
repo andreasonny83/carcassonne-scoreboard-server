@@ -1,8 +1,8 @@
 const io = require('socket.io');
-const guid = require('./modules/guid');
+const guid = require('./guid');
 
 // database
-const mongo = require('./modules/mongo');
+const mongo = require('./mongo');
 
 // configuration
 const config = require('../config/config.json');
