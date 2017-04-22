@@ -66,6 +66,14 @@ To manually stop the mongodb process, use the `npm stop` command.
 If you kill the `npm start` process before it runs the node server application,
 you will need to manually kill the mongod process with `npm stop`.
 
+## Releasing new versions
+
+1.  Add your changes: `git add .`
+1.  Commit your changes: `npm run commit`
+1.  Push and tag using npm version: `npm version -- minor`
+
+Replace `minor` with `major, minor or patch` according to the npm documentation.
+
 ## Contributing
 
 This package is using the AngularJS commit messages as default way to contribute
@@ -75,7 +83,7 @@ with commitizen node package integrated in this repository.
 1.  Create your feature branch: `git checkout -b my-new-feature`
 1.  Add your changes: `git add .`
 1.  Commit your changes: `npm run commit`
-1.  Push and tag using npm version: `npm version minor`
+1.  Push to remote: `git push`
 1.  Submit a pull request :sunglasses:
 
 ## Changelog

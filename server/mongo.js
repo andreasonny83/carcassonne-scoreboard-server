@@ -12,10 +12,11 @@ const config = require('../config/config.json');
 const debug = process.env.DEBUG;
 
 // MongoDB connection URL
-const url = process.env.MONGOLAB_URI ||
-            process.env.NODE_ENV === 'test' ?
-              config.db.testdb :
-              config.db.mongodb;
+let url = process.env.MONGOLAB_URI || config.db.mongodb;
+
+if (process.env.NODE_ENV === 'test') {
+  url = config.db.testdb;
+}
 
 if (debug === 'true') {
   console.log('NODE_ENV:', process.env.NODE_ENV);
