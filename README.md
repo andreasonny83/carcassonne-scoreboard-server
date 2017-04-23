@@ -1,5 +1,6 @@
 # Carcassonne Scoreboard (server)
 
+[![Build Status](https://travis-ci.org/andreasonny83/carcassonne-scoreboard-server.svg?branch=master)](https://travis-ci.org/andreasonny83/carcassonne-scoreboard-server)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 > Client version available at: [github.com/andreasonny83/carcassonne-scoreboard-client](https://github.com/andreasonny83/carcassonne-scoreboard-client)
