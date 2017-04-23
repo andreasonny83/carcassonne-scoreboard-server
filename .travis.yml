@@ -13,9 +13,6 @@ node_js:
 services:
   - mongodb
 
-# before_install:
- # - yarn upgrade
-
 script:
   - npm test
 

@@ -5,14 +5,14 @@ const app = express();
 const server = require('http').Server(app);
 
 // Modules
-const mongo = require('./server/mongo').init();
+const mongo = require('./server/mongo');
 
 // websockets
 const io = require('socket.io')(server);
 const websockets = require('./server/websockets').start(server);
 
 // configuration
-const config = require('./config/config.json');
+const config = require('./config/config');
 
 // Get our API routes
 const router = require('./server/router')(module);
@@ -27,9 +27,12 @@ app.use(function (req, res, next) {
   next();
 });
 
+mongo.connect(app.settings.env);
+// mongo.init(app.settings.env);
+
 // Set our api routes
 app.use('/', router);
 
-server.listen(serverPort, () => console.log(`Server running on http://localhost:${serverPort}`));
+server.listen(serverPort, () => console.log(`Server listening at http://localhost:${serverPort}`));
 
 module.exports = app;

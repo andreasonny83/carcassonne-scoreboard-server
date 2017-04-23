@@ -5,7 +5,7 @@ const guid = require('./guid');
 const mongo = require('./mongo');
 
 // configuration
-const config = require('../config/config.json');
+const config = require('../config/config');
 
 // global variables
 let users = {
@@ -145,6 +145,7 @@ function handler(socket) {
     if (!config.games[game_id]) {
       config.games[game_id] = {
         new_game: true,
+        id: game_id,
         admin: uid,
         players: [],
         logs: [],

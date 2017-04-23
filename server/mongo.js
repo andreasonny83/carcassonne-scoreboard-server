@@ -4,27 +4,37 @@
  * Perform MongoDB connection and sync the games collection
  */
 const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 const assert = require('assert');
+const _log = require('./log');
 
 // configuration
-const config = require('../config/config.json');
+const config = require('../config/config');
 
-const debug = process.env.DEBUG;
+let url;
 
-// MongoDB connection URL
-let url = process.env.MONGOLAB_URI || config.db.mongodb;
+var gamesSchema = mongoose.Schema({
+  name: String
+});
 
-if (process.env.NODE_ENV === 'test') {
-  url = config.db.testdb;
-}
+var Games = mongoose.model('Games', gamesSchema);
 
-if (debug === 'true') {
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-  console.log('mongodb url:', url);
-}
+var gameSchema = mongoose.Schema({
+  id: String,
+  name: String,
+  new_game: Boolean,
+  admin: String,
+  meeples: [],
+  max_players: Number,
+  players: Number,
+  logs: []
+});
+
+var Game = mongoose.model('Game', gameSchema);
 
 module.exports = {
-  init: init,
+  init: _init,
+  connect: connect,
   syncGame: syncGame,
   syncLog: syncLog,
   getGames: getGames,
@@ -32,16 +42,20 @@ module.exports = {
 }
 
 // Use connect method to connect to the Server
-function init() {
+function _init(env) {
+  url = config.mongoURI[env];
+  console.log(url);
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
-    console.log('Database connection established.');
+    _log('Database connection established.');
 
     var collection = db.collection('games');
 
     collection.find().each(function(err, doc) {
+
       if (doc) {
         config.games[doc._id] = doc;
+        console.log(config.games);
       }
       else {
         db.close();
@@ -50,28 +64,73 @@ function init() {
   });
 }
 
-function syncGame(game_id) {
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
+function init(err, games) {
+  if (err || !games) return console.error(err);
 
-    var collection = db.collection('games');
-    collection.update(
-      { _id: game_id },
-      { $set: {
-        name        : config.games[game_id].name,
-        new_game    : config.games[game_id].new_game,
-        admin       : config.games[game_id].admin,
-        meeples     : config.games[game_id].meeples,
-        max_players : config.games[game_id].max_players,
-        players     : config.games[game_id].players,
-        logs        : config.games[game_id].logs
-      }},
-      { upsert: true },
-      function() {
-        db.close();
-      }
-    );
+  console.log(games);
+  games.forEach(function(err, doc) {
+    if (doc.id) {
+      config.games[doc.id] = games[doc];
+    }
   });
+}
+
+function connect(env) {
+  url = config.mongoURI[env];
+
+  _log('NODE_ENV:', process.env.NODE_ENV);
+  _log('mongodb url:', url);
+
+  mongoose.connect(config.mongoURI[env], function(err, res) {
+    if(err) return console.error('Error connecting to the database.', err);
+
+    _log('Connected to Database:', config.mongoURI[env]);
+
+    Games.find({}, init);
+  });
+}
+
+function syncGame(game_id) {
+  var game = new Game({
+    id: game_id,
+    name: config.games[game_id].name,
+    admin: config.games[game_id].admin,
+    meeples: config.games[game_id].meeples,
+    max_players: config.games[game_id].max_players,
+    players: config.games[game_id].players,
+    logs: config.games[game_id].logs
+  });
+
+  game.save(function (err, fluffy) {
+    if (err) return console.error(err);
+
+    console.log('done');
+  });
+
+  // MongoClient.connect(url, function(err, db) {
+  //   assert.equal(null, err);
+  //
+  //   var collection = db.collection('games');
+  //
+  //   collection.update(
+  //     { _id: game_id },
+  //     { id: game_id },
+  //     { $set: {
+  //       name        : config.games[game_id].name,
+  //       new_game    : config.games[game_id].new_game,
+  //       admin       : config.games[game_id].admin,
+  //       meeples     : config.games[game_id].meeples,
+  //       max_players : config.games[game_id].max_players,
+  //       players     : config.games[game_id].players,
+  //       logs        : config.games[game_id].logs
+  //     }},
+  //     { upsert: true },
+  //     function() {
+  //       console.log(db.collection('games'));
+  //       db.close();
+  //     }
+  //   );
+  // });
 }
 
 function syncLog(game_id) {
@@ -82,6 +141,7 @@ function syncLog(game_id) {
 
     collection.update(
       { _id: game_id },
+      { id: game_id },
       { $set: {
         logs : config.games[game_id].logs
       }},
@@ -131,7 +191,7 @@ function getGame(game_id, callback) {
     assert.equal(null, err);
 
     db.collection('games')
-      .findOne({_id:game_id}, function(err, item) {
+      .findOne({_id: game_id}, function(err, item) {
         callback(item);
       });
   });
