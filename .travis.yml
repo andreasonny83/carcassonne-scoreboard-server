@@ -13,8 +13,8 @@ node_js:
 services:
   - mongodb
 
-before_install:
- - yarn upgrade
+# before_install:
+ # - yarn upgrade
 
 script:
   - npm test
@@ -31,7 +31,7 @@ after_success:
   - export GIT_TAG=build-$TRAVIS_BRANCH-$(date -u "+%Y-%m-%d")-$TRAVIS_BUILD_NUMBER
   - echo -n $GIT_TAG > public/version
   - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
-  - git push --quiet https://$GITHUBKEY@github.com/andreasonny83/arcassonne-scoreboard-server $GIT_TAG > /dev/null 2>&1
+  - git push --quiet https://$GITHUBKEY@github.com/andreasonny83/arcassonne-scoreboard-server --tags > /dev/null 2>&1
 
 branches:
   except:
