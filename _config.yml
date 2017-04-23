@@ -1,0 +1,8 @@
+title: Carcassonne-scoreboard-server
+description: Server side of Carcassonne Scoreboard
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-time-machine
+
+gems:
+  - jekyll-mentions
