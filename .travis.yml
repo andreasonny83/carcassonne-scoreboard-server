@@ -25,7 +25,7 @@ after_success:
   - export GIT_TAG=build-$(date -u "+%Y-%m-%d")-$TRAVIS_BUILD_NUMBER
   - git fetch --tags
   - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
-  - git push -q https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG} --tags
+  - git push -q https://${GHB_TOKEN}@github.com/${TRAVIS_REPO_SLUG} --tags
 
 branches:
   except:
