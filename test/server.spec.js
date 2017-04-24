@@ -1,12 +1,8 @@
-// const mongoose = require('mongoose');
-const MongoClient = require('mongodb').MongoClient;
-const mongo = require('./server/mongo');
-
-//Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('./server');
 const should = chai.should();
+
+const server = require('../server');
 
 chai.use(chaiHttp);
 

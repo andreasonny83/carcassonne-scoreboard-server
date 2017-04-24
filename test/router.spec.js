@@ -1,12 +1,8 @@
-const mongoose = require('mongoose');
-const MongoClient = require('mongodb').MongoClient;
-const mongo = require('./mongo');
-
-//Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../server');
 const should = chai.should();
+
+const server = require('../server');
 
 chai.use(chaiHttp);
 
@@ -28,23 +24,15 @@ describe('Router', () => {
       });
   });
 
-  describe('/gamesinfo GET', (done) => {
-    before('should clean the database', (done) => {
-      console.log(mongoose.connections[0].name);
+  it('should list the first 5 games on /gamesinfo GET', (done) => {
+    chai.request(server)
+    .get('/gamesinfo')
+    .end((err, res) => {
+      res.should.have.status(200);
+      res.should.be.json;
+      res.body.should.be.a('object');
 
       done();
-    });
-
-    it('should list the first 5 games on /gamesinfo GET', (done) => {
-      chai.request(server)
-      .get('/gamesinfo')
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.should.be.json;
-        res.body.should.be.a('object');
-
-        done();
-      });
     });
   });
 
