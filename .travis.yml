@@ -14,7 +14,9 @@ services:
   - mongodb
 
 script:
+  - npm run mongo:start:test
   - npm test
+  - npm run mongo:stop
 
 after_success:
   - git config --global user.email "travis@travis-ci.org"

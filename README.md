@@ -52,11 +52,29 @@ needs to run in development mode.
 
 ## Run your local project
 
-If you have correctly installed all the dependencies,
-you will now be able to run your local project simply with:
+In order for the app to run, you must initialize you local MongoDB,
+for doing that you can just run
 
 ```sh
-npm start
+$ npm run mongo:start
+# or
+$ npm run mongo:start:test
+# This is required for running the unit tests with `npm test`
+```
+
+Just remember to kill the process once you're done otherwise you will keep
+MongoDB running in the background.
+
+To kill the process run
+
+```sh
+$ npm run mongo:stop
+```
+
+Then start your local app with:
+
+```sh
+$ npm start
 ```
 
 ## MongoDB

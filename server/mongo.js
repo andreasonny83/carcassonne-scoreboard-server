@@ -44,7 +44,7 @@ module.exports = {
 // Use connect method to connect to the Server
 function _init(env) {
   url = config.mongoURI[env];
-  console.log(url);
+
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
     _log('Database connection established.');
@@ -67,7 +67,6 @@ function _init(env) {
 function init(err, games) {
   if (err || !games) return console.error(err);
 
-  console.log(games);
   games.forEach(function(err, doc) {
     if (doc.id) {
       config.games[doc.id] = games[doc];
@@ -76,7 +75,7 @@ function init(err, games) {
 }
 
 function connect(env) {
-  url = config.mongoURI[env];
+  url = process.env.MONGOLAB_URI || config.mongoURI[env];
 
   _log('NODE_ENV:', process.env.NODE_ENV);
   _log('mongodb url:', url);

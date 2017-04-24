@@ -1,4 +1,4 @@
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const MongoClient = require('mongodb').MongoClient;
 const mongo = require('./mongo');
 
@@ -19,14 +19,24 @@ describe('Router', () => {
         res.should.be.json;
         res.body.should.be.a('object');
         res.body.should.have.property('app');
+        res.body.should.have.property('version');
         res.body.should.have.property('status');
         res.body.should.have.property('message');
+        res.body.message.should.match(/^OK - /);
+
         done();
       });
   });
 
-  it('should list the first 5 games on /gamesinfo GET', (done) => {
-    chai.request(server)
+  describe('/gamesinfo GET', (done) => {
+    before('should clean the database', (done) => {
+      console.log(mongoose.connections[0].name);
+
+      done();
+    });
+
+    it('should list the first 5 games on /gamesinfo GET', (done) => {
+      chai.request(server)
       .get('/gamesinfo')
       .end((err, res) => {
         res.should.have.status(200);
@@ -35,7 +45,9 @@ describe('Router', () => {
 
         done();
       });
+    });
   });
+
 
   it('should list 5 games on /gamesinfo<game_id> GET', (done) => {
     chai.request(server)

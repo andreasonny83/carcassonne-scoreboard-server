@@ -3,10 +3,14 @@ const mongo = require('./mongo');
 
 const router = express.Router();
 
-let pkginfo;
+let app = {
+  name: null,
+  version: null,
+};
 
 module.exports = function(_pkginfo) {
-  pkginfo = _pkginfo;
+  app.name = _pkginfo.exports.name;
+  app.version = _pkginfo.exports.version;
 
   return router;
 };
@@ -14,8 +18,8 @@ module.exports = function(_pkginfo) {
 // render the app
 router.get('/status', function(req, res) {
   return res.status(200).json({
-    app: pkginfo.exports.name,
-    version: pkginfo.exports.version,
+    app: app.name,
+    version: app.version,
     status: 200,
     message: 'OK - ' + Math.random().toString(36).substr(3, 8)
   });

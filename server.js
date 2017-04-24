@@ -28,7 +28,6 @@ app.use(function (req, res, next) {
 });
 
 mongo.connect(app.settings.env);
-// mongo.init(app.settings.env);
 
 // Set our api routes
 app.use('/', router);
