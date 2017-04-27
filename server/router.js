@@ -28,9 +28,11 @@ router.get('/status', function(req, res) {
 // render the games in the database sorted by pages
 router.get('/gamesinfo', function(req, res) {
   var page = req.query.page ? req.query.page : 0;
-  var items_per_page = 5;
+  var items_per_page = 1;
 
-  mongo.getGames(page, items_per_page, function(data) {
+  mongo.getGames(page, items_per_page, function(err, data) {
+    if (err) return res.status(500).send();
+
     return res.status(200).json({
       games: data
     });

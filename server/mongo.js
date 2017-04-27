@@ -67,23 +67,25 @@ function _init(env) {
 function init(err, games) {
   if (err || !games) return console.error(err);
 
-  games.forEach(function(err, doc) {
-    if (doc.id) {
-      config.games[doc.id] = games[doc];
-    }
-  });
+  _log(games);
+
+  // games.forEach(function(err, doc) {
+  //   if (doc.id) {
+  //     config.games[doc.id] = games[doc];
+  //   }
+  // });
 }
 
-function connect(env) {
-  url = process.env.MONGOLAB_URI || config.mongoURI[env];
+function connect(app) {
+  url = process.env.MONGOLAB_URI || config.mongoURI[app.env];
 
-  _log('NODE_ENV:', process.env.NODE_ENV);
+  _log('NODE_ENV:', app.env);
   _log('mongodb url:', url);
 
-  mongoose.connect(config.mongoURI[env], function(err, res) {
+  mongoose.connect(config.mongoURI[app.env], function(err, res) {
     if(err) return console.error('Error connecting to the database.', err);
 
-    _log('Connected to Database:', config.mongoURI[env]);
+    _log('Connected to Database:', config.mongoURI[app.env]);
 
     Games.find({}, init);
   });
@@ -152,35 +154,19 @@ function syncLog(game_id) {
   });
 }
 
-function getItems(db, page, items_per_page, callback) {
-  var output = {};
-
-  db.collection('games')
-    .find()
-    .skip(items_per_page * page)
-    .limit(items_per_page)
-    .each(function(err, doc) {
-      if (doc) {
-        output[doc._id] = doc;
-      }
-      else {
-        callback(output);
-      }
-    });
-}
-
 function getGames(page, items_per_page, callback) {
   page = page || 0;
-  items_per_page = items_per_page || 10;
+  items_per_page = items_per_page || 1;
 
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
+  Games
+    .find({id: 'pippo'})
+    .skip(items_per_page * page)
+    .limit(items_per_page)
+    .exec(function(err, stat) {
+      if (err || !stat) callback(err, null);
 
-    getItems(db, page, items_per_page, function(res) {
-      db.close();
-      callback(res);
+      callback(null, stat);
     });
-  });
 }
 
 function getGame(game_id, callback) {

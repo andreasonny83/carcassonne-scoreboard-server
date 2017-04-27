@@ -1,7 +1,5 @@
-module.exports = function(msg) {
+module.exports = function() {
   if (process.env.DEBUG === 'true') {
-    const args = Array.prototype.slice.call(arguments);
-
-    console.log(args.join(' '));
+    console.log.apply(this, arguments);
   }
 };

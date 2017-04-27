@@ -1,5 +1,6 @@
 const express = require('express');
 const pkginfo = require('pkginfo')(module);
+const morgan = require('morgan');
 
 const app = express();
 const server = require('http').Server(app);
@@ -27,11 +28,11 @@ app.use(function (req, res, next) {
   next();
 });
 
-mongo.connect(app.settings.env);
-
-// Set our api routes
+app.use(morgan('dev'));
 app.use('/', router);
 
-server.listen(serverPort, () => console.log(`Server listening at http://localhost:${serverPort}`));
+mongo.connect(app.settings);
+
+app.listen(serverPort, () => console.log(`Server listening at http://localhost:${serverPort}`));
 
 module.exports = app;
