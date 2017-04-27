@@ -9,7 +9,6 @@ const server = require('http').Server(app);
 const mongo = require('./server/mongo');
 
 // websockets
-const io = require('socket.io')(server);
 const websockets = require('./server/websockets').start(server);
 
 // configuration
@@ -33,6 +32,6 @@ app.use('/', router);
 
 mongo.connect(app.settings);
 
-app.listen(serverPort, () => console.log(`Server listening at http://localhost:${serverPort}`));
+server.listen(serverPort, () => console.log(`Server listening at http://localhost:${serverPort}`));
 
 module.exports = app;

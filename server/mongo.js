@@ -33,47 +33,11 @@ var gameSchema = mongoose.Schema({
 var Game = mongoose.model('Game', gameSchema);
 
 module.exports = {
-  init: _init,
   connect: connect,
   syncGame: syncGame,
   syncLog: syncLog,
   getGames: getGames,
   getGame: getGame
-}
-
-// Use connect method to connect to the Server
-function _init(env) {
-  url = config.mongoURI[env];
-
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
-    _log('Database connection established.');
-
-    var collection = db.collection('games');
-
-    collection.find().each(function(err, doc) {
-
-      if (doc) {
-        config.games[doc._id] = doc;
-        console.log(config.games);
-      }
-      else {
-        db.close();
-      }
-    });
-  });
-}
-
-function init(err, games) {
-  if (err || !games) return console.error(err);
-
-  _log(games);
-
-  // games.forEach(function(err, doc) {
-  //   if (doc.id) {
-  //     config.games[doc.id] = games[doc];
-  //   }
-  // });
 }
 
 function connect(app) {
@@ -87,7 +51,9 @@ function connect(app) {
 
     _log('Connected to Database:', config.mongoURI[app.env]);
 
-    Games.find({}, init);
+    Games.find({}, function(err, games) {
+      if (err || !games) return console.error(err);
+    });
   });
 }
 
@@ -105,7 +71,7 @@ function syncGame(game_id) {
   game.save(function (err, fluffy) {
     if (err) return console.error(err);
 
-    console.log('done');
+    // console.log('done');
   });
 
   // MongoClient.connect(url, function(err, db) {

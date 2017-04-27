@@ -1677,7 +1677,7 @@ mongoose@4.9.5:
     regexp-clone "0.0.1"
     sliced "1.0.1"
 
-morgan@^1.8.1:
+morgan@1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.8.1.tgz#f93023d3887bd27b78dfd6023cea7892ee27a4b1"
   dependencies:
